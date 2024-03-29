@@ -67,6 +67,20 @@ class CNN_Additional_Layers(nn.Module):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))  # Passing through the additional fully connected layer
         return F.log_softmax(self.fc3(x), dim=1)
+class CNN_Modified_Filters(nn.Module):
+    def __init__(self):
+        super(CNN_Modified_Filters, self).__init__()
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=5, padding=2)  # Increased filters to 64
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=5, padding=2)  # Increased filters to 128
+        self.fc1 = nn.Linear(7*7*128, 256)  # Adjusted for the increased number of filters
+        self.fc2 = nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))
+        x = F.relu(F.max_pool2d(self.conv2(x), 2))
+        x = x.view(-1, 7*7*128)
+        x = F.relu(self.fc1(x))
+        return F.log_softmax(self.fc2(x), dim=1)
 
 # Load Data
 transform = transforms.Compose([
